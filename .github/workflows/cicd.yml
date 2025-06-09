@@ -60,7 +60,8 @@ jobs:
 
       - name: Build and Test
         run: |
-          cd ./gradlew build
+          cd project
+          ./gradlew build
 
       - name: scp ec2 전송
         uses: appleboy/scp-action@v0.1.7
