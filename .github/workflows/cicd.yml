@@ -45,7 +45,9 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
 
       - name: make application.yml
-        run: echo "${{ secrets.APPLICATION_YML }}" > ./src/main/resources/application.yml
+        run: |
+          mkdir ./src/main/resources
+          echo "${{ secrets.APPLICATION_YML }}" > ./src/main/resources/application.yml
 
       - name: Build and Test
         run: ./gradlew build
