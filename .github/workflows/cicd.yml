@@ -44,16 +44,23 @@ jobs:
             ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
 
+      - name: Create project directory and move code
+        run: |
+          mkdir -p project
+          shopt -s extglob dotglob
+          mv !(project) project/
+
       - name: make application.yml
         run: |
           mkdir ./src/main/resources
-          echo "${{ secrets.APPLICATION_YML }}" > ./src/main/resources/application.yml
+          echo "${{ secrets.APPLICATION_YML }}" > project/src/main/resources/application.yml
 
       - name: Grant execute permission to gradlew
-        run: chmod +x ./gradlew
+        run: chmod +x project/gradlew
 
       - name: Build and Test
-        run: ./gradlew build
+        run: |
+          cd ./gradlew build
 
       - name: scp ec2 전송
         uses: appleboy/scp-action@v0.1.7
@@ -61,8 +68,8 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.MY_AWS_NAME }}
           key: ${{ secrets.SECRET }}
-          source: "."
-          target: "~/"
+          source: "project/"
+          target: "~/project"
 
       - name: SSH and deploy
         uses: appleboy/ssh-action@v1
@@ -71,9 +78,6 @@ jobs:
           username: ${{ secrets.MY_AWS_NAME }}
           key: ${{ secrets.SECRET }}
           script: |
-            rm -rf project
-            mkdir project
-            shopt -s extglob dotglob
-            mv !(.bash_history|.bash_logout|.bashrc|.cache|.gradle|.profile|.ssh|.sudo_as_admin_successful|project) project/
+            cd ~/project
             docker compose down
             docker compose up -d --build
