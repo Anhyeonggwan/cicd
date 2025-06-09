@@ -52,7 +52,7 @@ jobs:
 
       - name: make application.yml
         run: |
-          mkdir ./src/main/resources
+          mkdir project/src/main/resources
           echo "${{ secrets.APPLICATION_YML }}" > project/src/main/resources/application.yml
 
       - name: Grant execute permission to gradlew
