@@ -48,7 +48,7 @@ jobs:
           echo "${{ secrets.APPLICATION_YML }}" > ./src/main/resources/application.yml
 
       - name: Build and Test
-        run: ./gradlew build
+        run: sudo ./gradlew build
 
       - name: Prepare deploy package
         run: |
