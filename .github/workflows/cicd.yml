@@ -44,6 +44,11 @@ jobs:
             ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
 
+      - name: make project
+        run: |
+          mkdir project
+          cd project
+
       - name: make application.yml
         run: |
           mkdir ./src/main/resources
@@ -72,5 +77,6 @@ jobs:
           username: ${{ secrets.MY_AWS_NAME }}
           key: ${{ secrets.SECRET }}
           script: |
+            rm -rf project
             docker compose down
             docker compose up -d --build
