@@ -55,19 +55,14 @@ jobs:
       - name: Build and Test
         run: ./gradlew build
 
-      - name: Prepare deployment folder
-        run: |
-          mkdir project
-          cp -r Dockerfile docker-compose.yml gradlew gradlew.bat build.gradle settings.gradle src build project/
-
       - name: scp ec2 전송
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.MY_AWS_NAME }}
           key: ${{ secrets.SECRET }}
-          source: "project"
-          target: "~"
+          source: "."
+          target: "~/"
 
       - name: SSH and deploy
         uses: appleboy/ssh-action@v1
@@ -78,6 +73,7 @@ jobs:
           script: |
             rm -rf project
             mkdir project
-            cd ~/project
+            shopt -s extglob dotglob
+            mv !(.bash_history|.bash_logout|.bashrc|.cache|.gradle|.profile|.ssh|.sudo_as_admin_successful|project) project/
             docker compose down
             docker compose up -d --build
