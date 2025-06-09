@@ -78,5 +78,6 @@ jobs:
           key: ${{ secrets.SECRET }}
           script: |
             rm -rf project
+            cd ~/project
             docker compose down
             docker compose up -d --build
