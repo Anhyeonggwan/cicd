@@ -44,11 +44,6 @@ jobs:
             ~/.gradle/caches
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
 
-      - name: make project
-        run: |
-          mkdir project
-          cd project
-
       - name: make application.yml
         run: |
           mkdir ./src/main/resources
@@ -60,15 +55,19 @@ jobs:
       - name: Build and Test
         run: ./gradlew build
 
+      - name: Prepare deployment folder
+        run: |
+          mkdir project
+          cp -r Dockerfile docker-compose.yml gradlew gradlew.bat build.gradle settings.gradle src build project/
+
       - name: scp ec2 전송
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.MY_AWS_NAME }}
           key: ${{ secrets.SECRET }}
-          source: "."
-          target: "~/project"
-          strip_components: 1
+          source: "project"
+          target: "~"
 
       - name: SSH and deploy
         uses: appleboy/ssh-action@v1
