@@ -49,6 +49,9 @@ jobs:
           mkdir ./src/main/resources
           echo "${{ secrets.APPLICATION_YML }}" > ./src/main/resources/application.yml
 
+      - name: Grant execute permission to gradlew
+        run: chmod +x ./gradlew
+
       - name: Build and Test
         run: ./gradlew build
 
