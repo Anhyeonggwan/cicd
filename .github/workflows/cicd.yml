@@ -2,6 +2,9 @@
 # Workflow : 하나의 yml 파일을 하나의 Workflow라고 부른다. 
 name: CI/CD using github actions & docker
 
+permissions:
+  contents: read
+
 # Event : 실행되는 시점을 설정
 # main이라는 브랜치에 push 될 때 아래 Workflow를 실행
 on:
@@ -22,6 +25,10 @@ jobs:
     steps:
       - name: get github repository
         uses: actions/checkout@v3
+
+      - name: Check gradlew existence
+        run: ls -l ./gradlew
+
       # jdk 버전 setting
       - name: Set up JDK
         uses: actions/setup-java@v3
@@ -60,8 +67,5 @@ jobs:
           username: ${{ secrets.MY_AWS_NAME }}
           key: ${{ secrets.SECRET }}
           script: |
-            rm -rf ~/project
-            unzip -o ~/app.zip -d ~/
-            cd ~/project
             docker compose down
             docker compose up -d --build
