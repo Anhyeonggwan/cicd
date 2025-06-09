@@ -11,7 +11,7 @@ public class AppController {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
-    @GetMapping("/hello")
+    @GetMapping("/hello") 
     public String getMethodName1() {
         return "success";
     }
