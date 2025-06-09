@@ -80,5 +80,6 @@ jobs:
           key: ${{ secrets.SECRET }}
           script: |
             cd ~/project
+            sudo chown -R 999:999 ./mysql_data
             docker compose down
             docker compose up -d --build
