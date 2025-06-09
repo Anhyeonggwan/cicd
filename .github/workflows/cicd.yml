@@ -1,0 +1,78 @@
+# Workflow의 이름
+# Workflow : 하나의 yml 파일을 하나의 Workflow라고 부른다. 
+name: CI/CD using github actions & docker
+
+# Event : 실행되는 시점을 설정
+# main이라는 브랜치에 push 될 때 아래 Workflow를 실행
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+# 하나의 Workflow는 1개 이상의 Job으로 구성된다. 
+# 여러 Job은 기본적으로 병렬적으로 수행된다.
+jobs:
+  # Job을 식별하기 위한 id
+  MY-CI-CD:
+    # Github Actions를 실행시킬 서버 종류 선택
+    runs-on: ubuntu-latest
+
+    # Step : 특정 작업을 수행하는 가장 작은 단위
+    # Job은 여러 Step들로 구성되어 있다.
+    steps:
+      - name: get github repository
+        uses: actions/checkout@v3
+      # jdk 버전 setting
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin' # 어떤 브랜드를 쓸거냐
+          java-version: 17
+
+      # radle caching - 빌드 시간 향상
+      - name: Gradle Caching
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: make .yml
+        run: echo "${{ secrets.APPLICATION_YML }}" > ./src/main/resources/application.yml
+
+      - name: Build and Test
+        run: ./gradlew build
+
+      - name: Prepare deploy package
+        run: |
+          mkdir project
+          cp -r docker-compose.yml Dockerfile build.gradle settings.gradle src/main/ project/
+          zip -r app.zip project
+
+      - name: scp ec2 전송
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.MY_AWS_NAME }}
+          key: ${{ secrets.SECRET }}
+          source: "app.zip"
+          target: "~/"
+          strip_components: 1
+
+      - name: SSH and deploy
+        uses: appleboy/ssh-action@v1
+        with: 
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.MY_AWS_NAME }}
+          key: ${{ secrets.SECRET }}
+          script: |
+            rm -rf ~/project
+            unzip -o ~/app.zip -d ~/
+            cd ~/project
+            docker compose down
+            docker compose up -d --build
