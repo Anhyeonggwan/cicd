@@ -67,7 +67,7 @@ jobs:
           username: ${{ secrets.MY_AWS_NAME }}
           key: ${{ secrets.SECRET }}
           source: "."
-          target: "~/"
+          target: "~/project"
           strip_components: 1
 
       - name: SSH and deploy
