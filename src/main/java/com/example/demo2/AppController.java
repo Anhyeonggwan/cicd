@@ -11,12 +11,17 @@ public class AppController {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
+    @GetMapping("/hello")
+    public String getMethodName1() {
+        return "success";
+    }
+    
+
     @GetMapping("/redis")
     public String redisMethod() {
         redisTemplate.opsForValue().set("abc", "Hello World");
         return "redis";
     }
-    
 
     @GetMapping("/")
     public String getMethodName() {
