@@ -53,7 +53,7 @@ jobs:
       - name: Prepare deploy package
         run: |
           mkdir project
-          cp -r docker-compose.yml Dockerfile build.gradle settings.gradle src/main/ project/
+          cp -r docker-compose.yml Dockerfile gradlew gradlew.bat build.gradle settings.gradle src/main/ project/
           zip -r app.zip project
 
       - name: scp ec2 전송
