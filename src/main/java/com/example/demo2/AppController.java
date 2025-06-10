@@ -11,6 +11,12 @@ public class AppController {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
+    @GetMapping("/cheerup")
+    public String getMethodName2() {
+        return "오늘도 화이팅~";
+    }
+    
+
     @GetMapping("/hello") 
     public String getMethodName1() {
         return "수진 누나 안녕~";
