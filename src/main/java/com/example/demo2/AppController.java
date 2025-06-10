@@ -13,7 +13,7 @@ public class AppController {
 
     @GetMapping("/hello") 
     public String getMethodName1() {
-        return "success";
+        return "수진 누나 안녕~";
     }
     
 
