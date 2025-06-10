@@ -71,7 +71,7 @@ jobs:
           username: ${{ secrets.MY_AWS_NAME }}
           key: ${{ secrets.SECRET }}
           source: "project/"
-          target: "~/project"
+          target: "~/"
 
       - name: SSH and deploy
         uses: appleboy/ssh-action@v1
