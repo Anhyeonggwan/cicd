@@ -46,6 +46,7 @@ jobs:
 
       - name: Create project directory and move code
         run: |
+          sudo rm -rf project
           mkdir -p project
           shopt -s extglob dotglob
           mv !(project) project/
@@ -79,7 +80,5 @@ jobs:
           username: ${{ secrets.MY_AWS_NAME }}
           key: ${{ secrets.SECRET }}
           script: |
-            cd ~/project
-            sudo chown -R 999:999 ./mysql_data
             sudo docker compose down
             sudo docker compose up -d --build
