@@ -1,0 +1,50 @@
+name: deploy
+
+on:
+    push: 
+        branches: 
+            - main
+
+jobs:
+    CD:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Create project directory and move code
+              run: |
+                rm -rf project
+                mkdir -p project
+                shopt -s extglob dotglob
+                mv !(project) project/
+
+            - name: make application.yml
+              run: |
+                mkdir project/src/main/resources
+                echo "${{ secrets.APPLICATION_YML }}" > project/src/main/resources/application.yml
+
+            - name: Grant execute permission to gradlew
+              run: chmod +x project/gradlew
+
+            - name: Build and Test
+              run: |
+                cd project
+                ./gradlew build
+
+            - name: scp ec2 전송
+              uses: appleboy/scp-action@v0.1.7
+              with:
+                host: ${{ secrets.EC2_HOST }}
+                username: ${{ secrets.MY_AWS_NAME }}
+                key: ${{ secrets.SECRET }}
+                source: "project/"
+                target: "~/"
+
+            - name: SSH and deploy
+              uses: appleboy/ssh-action@v1
+              with: 
+                host: ${{ secrets.EC2_HOST }}
+                username: ${{ secrets.MY_AWS_NAME }}
+                key: ${{ secrets.SECRET }}
+                script: |
+                    cd project
+                    sudo docker compose down
+                    sudo docker compose up -d --build
