@@ -13,8 +13,8 @@ jobs:
               run: |
                 rm -rf project
                 mkdir -p project
-                shopt -s extglob dotglob
-                mv !(project) project/
+#                shopt -s extglob dotglob
+#                mv !(project) project/
 
             - name: make application.yml
               run: |
