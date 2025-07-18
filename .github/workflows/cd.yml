@@ -13,8 +13,11 @@ jobs:
               run: |
                 rm -rf project
                 mkdir -p project
-#                shopt -s extglob dotglob
-#                mv !(project) project/
+                for item in * .[^.]*; do
+                  if [ "$item" != "project" ] && [ -e "$item" ]; then
+                    mv "$item" project/
+                  fi
+                done
 
             - name: make application.yml
               run: |
