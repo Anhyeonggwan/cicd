@@ -18,7 +18,7 @@ public class AppController {
 
     @GetMapping("/hello") 
     public String getMethodName1() {
-        return "수진 누나 안녕~";
+        return "안녕~";
     }
     
 
