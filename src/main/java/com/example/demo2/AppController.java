@@ -13,7 +13,7 @@ public class AppController {
 
     @GetMapping("/cheerup")
     public String getMethodName2() {
-        return "push 확인123";
+        return "push 확인1234";
     }
 
     @GetMapping("/hello") 
