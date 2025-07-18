@@ -9,19 +9,26 @@ jobs:
     CD:
         runs-on: ubuntu-latest
         steps:
+            - name: Checkout
+              uses: actions/checkout@v3
+
+            - name: Set up Jdk
+              uses: actions/setup-java@v3
+              with:
+                distribution: temurin
+                java-version: 17
+
             - name: Create project directory and move code
               run: |
                 rm -rf project
                 mkdir -p project
-                for item in * .[^.]*; do
-                  if [ "$item" != "project" ] && [ -e "$item" ]; then
-                    mv "$item" project/
-                  fi
-                done
+                shopt -s extglob dotglob
+                mv !(project) project/
+
 
             - name: make application.yml
               run: |
-                mkdir -p project/src/main/resources
+                mkdir project/src/main/resources
                 echo "${{ secrets.APPLICATION_YML }}" > project/src/main/resources/application.yml
 
             - name: Grant execute permission to gradlew
