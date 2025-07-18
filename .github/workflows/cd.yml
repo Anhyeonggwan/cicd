@@ -7,7 +7,7 @@ on:
 
 jobs:
     CD:
-        if: github.event.head_commit.message != '' && github.event.pusher.name == 'web-flow'
+        if: github.event_name == 'push' && startsWith(github.event.head_commit.message, 'Merge pull request')
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
