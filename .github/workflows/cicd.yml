@@ -9,7 +9,11 @@ permissions:
 # main이라는 브랜치에 push 될 때 아래 Workflow를 실행
 on:
   pull_request:
-    types: [opened, synchronize, reopened, closed] # closed는 merge 포함
+    branches: 
+      - main
+  push: 
+    branches: 
+      - main
 
 # 하나의 Workflow는 1개 이상의 Job으로 구성된다. 
 # 여러 Job은 기본적으로 병렬적으로 수행된다.
@@ -18,7 +22,7 @@ jobs:
   CI:
     # Github Actions를 실행시킬 서버 종류 선택
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' && github.event.action != 'closed'
+    if: github.event_name == 'pull_request'
     # Step : 특정 작업을 수행하는 가장 작은 단위
     # Job은 여러 Step들로 구성되어 있다.
     steps:
@@ -46,12 +50,7 @@ jobs:
   CD:
     runs-on: ubuntu-latest
     needs: CI
-    if: >
-      github.event_name == 'pull_request' &&
-      github.event.action == 'closed' &&
-      github.event.pull_request.merged == true &&
-      github.base_ref == 'main'
-        
+    if: github.event_name == 'push'
     steps:
       - name: Create project directory and move code
         run: |
