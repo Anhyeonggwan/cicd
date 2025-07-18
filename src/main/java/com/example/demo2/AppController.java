@@ -13,9 +13,8 @@ public class AppController {
 
     @GetMapping("/cheerup")
     public String getMethodName2() {
-        return "오늘도 화이팅~";
+        return "push 확인";
     }
-    
 
     @GetMapping("/hello") 
     public String getMethodName1() {
